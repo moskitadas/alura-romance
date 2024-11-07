@@ -1,0 +1,218 @@
+<html><head><base href="/" />
+<meta charset="UTF-8">
+<title>Romance Cinema - Catálogo de Filmes Românticos</title>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+        min-height: 100vh;
+    }
+
+    header {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        color: #d81b60;
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .search-bar {
+        max-width: 600px;
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .search-bar input {
+        width: 100%;
+        padding: 0.8rem;
+        border: 2px solid #f48fb1;
+        border-radius: 25px;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s;
+    }
+
+    .search-bar input:focus {
+        border-color: #d81b60;
+        box-shadow: 0 0 10px rgba(216, 27, 96, 0.2);
+    }
+
+    .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .movie-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+
+    .movie-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .movie-poster {
+        width: 100%;
+        height: 375px;
+        object-fit: cover;
+    }
+
+    .movie-info {
+        padding: 1rem;
+    }
+
+    .movie-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .movie-year {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .rating {
+        color: #d81b60;
+        font-weight: bold;
+    }
+
+    @keyframes heartbeat {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .heart-icon {
+        color: #d81b60;
+        font-size: 1.2rem;
+        animation: heartbeat 1.5s infinite;
+    }
+</style>
+</head>
+<body>
+    <header>
+        <h1>💘 Romance Cinema</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Buscar filmes românticos..." id="searchInput">
+        </div>
+    </header>
+
+    <main class="movie-grid" id="movieGrid">
+        <!-- Movie cards will be dynamically inserted here -->
+    </main>
+
+<script>
+const movies = [
+    {
+        title: "Orgulho e Preconceito",
+        year: 2005,
+        rating: 4.8,
+        poster: "https://m.media-amazon.com/images/M/MV5BMTA1NDQ3NTcyOTNeQTJeQWpwZ15BbWU3MDA0MzA4MzE@._V1_SX300.jpg",
+        alt: "Cena do filme Orgulho e Preconceito com Keira Knightley"
+    },
+    {
+        title: "Diário de uma Paixão",
+        year: 2004,
+        rating: 4.7,
+        poster: "https://m.media-amazon.com/images/M/MV5BMTk3OTM5Njg5M15BMl5BanBnXkFtZTYwMzA0ODI3._V1_SX300.jpg",
+        alt: "Ryan Gosling e Rachel McAdams em cena romântica na chuva"
+    },
+    {
+        title: "Amor à Segunda Vista",
+        year: 2002,
+        rating: 4.5,
+        poster: "data:image/jpeg;base64,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",
+        alt: "Casal abraçado em cenário romântico"
+    },
+    {
+        title: "Titanic",
+        year: 1997,
+        rating: 4.9,
+        poster: "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg",
+        alt: "Jack e Rose na proa do navio Titanic"
+    },
+    {
+        title: "Como Eu Era Antes de Você",
+        year: 2016,
+        rating: 4.6,
+        poster: "https://m.media-amazon.com/images/M/MV5BMTQ2NjE4NDE2NV5BMl5BanBnXkFtZTgwOTcwNDE5NzE@._V1_SX300.jpg",
+        alt: "Emilia Clarke e Sam Claflin em cena romântica"
+    },
+    {
+        title: "La La Land",
+        year: 2016,
+        rating: 4.7,
+        poster: "https://m.media-amazon.com/images/M/MV5BMzUzNDM2NzM2MV5BMl5BanBnXkFtZTgwNTM3NTg4OTE@._V1_SX300.jpg",
+        alt: "Emma Stone e Ryan Gosling dançando sob as estrelas"
+    }
+];
+
+function openYouTubeTrailer(movieTitle) {
+    const searchQuery = `${movieTitle} trailer oficial`;
+    const encodedSearch = encodeURIComponent(searchQuery);
+    const youtubeUrl = `https://www.youtube.com/results?search_query=${encodedSearch}`;
+    window.open(youtubeUrl, '_blank');
+}
+
+function createMovieCard(movie) {
+    return `
+        <div class="movie-card" onclick="openYouTubeTrailer('${movie.title}')" role="button" tabindex="0">
+            <img class="movie-poster" 
+                src="${movie.poster}" 
+                alt="${movie.alt}"
+                onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22250%22 height=%22375%22><rect width=%22100%25%22 height=%22100%25%22 fill=%22%23f8bbd0%22/><text x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 fill=%22%23d81b60%22>🎬 ${movie.title}</text></svg>'">
+            <div class="movie-info">
+                <h3 class="movie-title">${movie.title}</h3>
+                <p class="movie-year">${movie.year}</p>
+                <p class="rating">★ ${movie.rating}/5</p>
+            </div>
+        </div>
+    `;
+}
+
+function renderMovies(movieList) {
+    const movieGrid = document.getElementById('movieGrid');
+    movieGrid.innerHTML = movieList.map(movie => createMovieCard(movie)).join('');
+}
+
+function filterMovies(searchTerm) {
+    return movies.filter(movie => 
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+}
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const filteredMovies = filterMovies(e.target.value);
+    renderMovies(filteredMovies);
+});
+
+// Initial render
+renderMovies(movies);
+</script>
+
+</body>
+</html>
